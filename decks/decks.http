@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:8080
+
+# @name createDeck
+POST {{baseUrl}}/api/decks
+
+###
+
+@deckId = {{createDeck.response.body.data.deck_id}}
+
+GET {{baseUrl}}/api/decks/{{deckId}}

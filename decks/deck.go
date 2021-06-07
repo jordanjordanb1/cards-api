@@ -3,6 +3,7 @@ package decks
 import (
 	"errors"
 	"math/rand"
+	"sort"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ type Deck struct {
 }
 
 type Card struct {
+	Index int    `json:"-"`
 	Face  string `json:"face"`
 	Suit  string `json:"suit"`
 	Value int    `json:"value"`
@@ -30,14 +32,15 @@ func NewDeck(shuffle bool) Deck {
 	shuffled := false
 
 	// Gets all cards without map key
-	for _, card := range BasicDeck {
-		_cards = append(_cards, card)
-	}
+	_cards = mapToArray(BasicDeck)
 
 	if shuffle {
 		// Shuffle cards
 		_cards = ShuffleDeck(_cards)
 		shuffled = true
+	} else {
+		// Make sure cards are in order
+		sortDeck(_cards)
 	}
 
 	deck := Deck{Id: uuid, Shuffled: shuffled, Remaining: 52, UndrawnCards: _cards}
@@ -65,6 +68,9 @@ func NewCustomDeck(shuffle bool, cardSelection []string) Deck {
 		// Shuffle cards
 		_cards = ShuffleDeck(_cards)
 		shuffled = true
+	} else {
+		// Make sure cards are in order
+		sortDeck(_cards)
 	}
 
 	deck := Deck{Id: uuid, Shuffled: shuffled, Remaining: len(_cards), UndrawnCards: _cards}
@@ -105,4 +111,22 @@ func ShuffleDeck(cards []Card) []Card {
 	})
 
 	return cards
+}
+
+// Sorts deck of cards based on it's index
+func sortDeck(cards []Card) {
+	sort.SliceStable(cards, func(i, j int) bool {
+		return cards[i].Index < cards[j].Index
+	})
+}
+
+// Flattens a card map to an array
+func mapToArray(mapToFlatten map[string]Card) []Card {
+	var acc []Card
+
+	for _, value := range mapToFlatten {
+		acc = append(acc, value)
+	}
+
+	return acc
 }

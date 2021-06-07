@@ -1,44 +1,104 @@
 @baseUrl = http://localhost:8080
 
+#
+# Creates a deck
+#
 # @name createDeck
 POST {{baseUrl}}/api/decks
 
 ###
 
-@deckId = {{createDeck.response.body.data.deck_id}}
+@deckId1 = {{createDeck.response.body.data.deck_id}}
 
-GET {{baseUrl}}/api/decks/{{deckId}}
+#
+# GETs deck based on previous query
+#
+GET {{baseUrl}}/api/decks/{{deckId1}}
 
 ###
 
+#
+# Creates a deck with shuffling enabled
+#
 # @name createDeckWithShuffle
 POST {{baseUrl}}/api/decks?shuffle=true
 
 ###
 
-@deckId = {{createDeckWithShuffle.response.body.data.deck_id}}
+@deckId2 = {{createDeckWithShuffle.response.body.data.deck_id}}
 
-GET {{baseUrl}}/api/decks/{{deckId}}
+#
+# GETs deck based on previous query
+#
+GET {{baseUrl}}/api/decks/{{deckId2}}
 
 ###
 
+#
+# Creates a deck with custom card selection
+#
 # @name createDeckWithSelection
 POST {{baseUrl}}/api/decks?cards=5H,AS
 
 ###
 
-@deckId = {{createDeckWithSelection.response.body.data.deck_id}}
+@deckId3 = {{createDeckWithSelection.response.body.data.deck_id}}
 
-GET {{baseUrl}}/api/decks/{{deckId}}
+#
+# GETs deck based on previous query
+#
+GET {{baseUrl}}/api/decks/{{deckId3}}
 
 ###
 
+#
+# Creates a deck with custom card selection and shuffling enabled
+#
 # @name createDeckWithSelectionAndShuffle
 POST {{baseUrl}}/api/decks?shuffle=true&cards=5H,AS,KS,7H,3D
 
 
 ###
 
-@deckId = {{createDeckWithSelectionAndShuffle.response.body.data.deck_id}}
+@deckId4 = {{createDeckWithSelectionAndShuffle.response.body.data.deck_id}}
 
-GET {{baseUrl}}/api/decks/{{deckId}}
+#
+# GETs deck based on previous query
+#
+GET {{baseUrl}}/api/decks/{{deckId4}}
+
+###
+
+#
+# Creates a new deck
+#
+# @name createDeckToDrawCard
+
+POST {{baseUrl}}/api/decks
+
+###
+
+@deckId5 = {{createDeckToDrawCard.response.body.data.deck_id}}
+
+#
+# GETs deck's cards based on previous query
+#
+GET {{baseUrl}}/api/decks/{{deckId5}}/cards
+
+###
+
+#
+# Creates a new deck
+#
+# @name createDeckToDrawCardWithCount
+
+POST {{baseUrl}}/api/decks
+
+###
+
+@deckId6 = {{createDeckToDrawCardWithCount.response.body.data.deck_id}}
+
+#
+# GETs deck's cards based on previous query with count query param
+#
+GET {{baseUrl}}/api/decks/{{deckId6}}/cards?count=5

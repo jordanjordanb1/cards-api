@@ -12,6 +12,7 @@ import (
 func RouterRegister(router *gin.RouterGroup) {
 	router.POST("/", CreateDeck)
 	router.GET("/:deckId", FindDeck)
+	router.GET("/:deckId/cards", HandleDrawCard)
 }
 
 // Handles POST route to create a new deck
@@ -36,8 +37,6 @@ func CreateDeck(c *gin.Context) {
 
 	// Saves deck to cache
 	deck.Save()
-
-	deck.Cards = nil
 
 	c.JSON(http.StatusCreated, gin.H{
 		"status": http.StatusCreated,
@@ -64,5 +63,44 @@ func FindDeck(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   deck,
+	})
+}
+
+// Handles GET route to draw a card
+func HandleDrawCard(c *gin.Context) {
+	deckId := c.Param("deckId")
+	count, _ := strconv.Atoi(c.DefaultQuery("count", "1"))
+
+	deck, error := GetDeckById(deckId)
+
+	// If deck not found, handle accordingly
+	if error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": error.Error(),
+		})
+
+		return
+	}
+
+	cards := deck.UndrawnCards
+
+	// Gets cards from deck based on count query param (defaults to 1)
+	drawnCards := cards[len(cards)-count:]
+
+	// Removes drawn cards from deck
+	cards = cards[:len(cards)-count]
+
+	// Sets new values
+	deck.UndrawnCards = cards
+	deck.DrawnCards = drawnCards
+	deck.Remaining = len(cards)
+
+	// Resaves deck into cache store
+	deck.Save()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   drawnCards,
 	})
 }

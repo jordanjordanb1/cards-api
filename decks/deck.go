@@ -19,7 +19,7 @@ type Deck struct {
 	Id        string `json:"deck_id"`
 	Shuffled  bool   `json:"shuffled"`
 	Remaining int    `json:"remaining"`
-	Cards     []card `json:"cards"`
+	Cards     []card `json:"cards,omitempty"`
 }
 
 // Creates a new deck of cards with no custom selection
@@ -34,6 +34,7 @@ func NewDeck(shuffle bool) Deck {
 	}
 
 	if shuffle {
+		// Shuffle cards
 		cards = ShuffleDeck(cards)
 		shuffled = true
 	}
@@ -56,12 +57,13 @@ func NewCustomDeck(shuffle bool, cardSelection []string) Deck {
 		// Checks if card type is valid
 		if found {
 			cards = append(cards, foundCard)
-			shuffled = true
 		}
 	}
 
 	if shuffle {
+		// Shuffle cards
 		cards = ShuffleDeck(cards)
+		shuffled = true
 	}
 
 	deck := Deck{Id: uuid, Shuffled: shuffled, Remaining: len(cards), Cards: cards}

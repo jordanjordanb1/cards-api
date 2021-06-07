@@ -2,6 +2,7 @@ package decks
 
 import (
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -18,16 +19,19 @@ func CreateDeck(c *gin.Context) {
 	var deck Deck
 
 	cardSelection := c.Query("cards")
+	shuffleQuery := c.Query("shuffle")
+
+	shuffle, _ := strconv.ParseBool(shuffleQuery)
 
 	// Checks if query was set
 	if cardSelection != "" {
 		// Splits query string into slice
 		cardSelectionArray := strings.Split(cardSelection, ",")
 
-		deck = NewCustomDeck(cardSelectionArray)
+		deck = NewCustomDeck(shuffle, cardSelectionArray)
 	} else {
 		// No query, create normal deck
-		deck = NewDeck()
+		deck = NewDeck(shuffle)
 	}
 
 	// Saves deck to cache

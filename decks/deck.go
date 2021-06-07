@@ -2,6 +2,8 @@ package decks
 
 import (
 	"errors"
+	"math/rand"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jordanjordanb1/cards-api/cache"
@@ -21,24 +23,31 @@ type Deck struct {
 }
 
 // Creates a new deck of cards with no custom selection
-func NewDeck() Deck {
+func NewDeck(shuffle bool) Deck {
 	var cards []card
 	uuid := uuid.New().String()
+	shuffled := false
 
 	// Gets all cards without map key
 	for _, card := range deckOfCards {
 		cards = append(cards, card)
 	}
 
-	deck := Deck{Id: uuid, Shuffled: false, Remaining: 52, Cards: cards}
+	if shuffle {
+		cards = ShuffleDeck(cards)
+		shuffled = true
+	}
+
+	deck := Deck{Id: uuid, Shuffled: shuffled, Remaining: 52, Cards: cards}
 
 	return deck
 }
 
 // Creates a new deck based on selection passed as an argument
-func NewCustomDeck(cardSelection []string) Deck {
+func NewCustomDeck(shuffle bool, cardSelection []string) Deck {
 	var cards []card
 	uuid := uuid.New().String()
+	shuffled := false
 
 	// Loops through array of passed card types
 	for _, cardHash := range cardSelection {
@@ -47,10 +56,15 @@ func NewCustomDeck(cardSelection []string) Deck {
 		// Checks if card type is valid
 		if found {
 			cards = append(cards, foundCard)
+			shuffled = true
 		}
 	}
 
-	deck := Deck{Id: uuid, Shuffled: false, Remaining: len(cards), Cards: cards}
+	if shuffle {
+		cards = ShuffleDeck(cards)
+	}
+
+	deck := Deck{Id: uuid, Shuffled: shuffled, Remaining: len(cards), Cards: cards}
 
 	return deck
 }
@@ -72,6 +86,19 @@ func GetDeckById(id string) (interface{}, error) {
 	}
 
 	return deck, nil
+}
+
+// Shuffles deck
+func ShuffleDeck(cards []card) []card {
+	// Required to seed randomizer
+	rand.Seed(time.Now().UnixNano())
+
+	// Shuffles cards
+	rand.Shuffle(len(cards), func(i, j int) {
+		cards[i], cards[j] = cards[j], cards[i]
+	})
+
+	return cards
 }
 
 var deckOfCards = map[string]card{

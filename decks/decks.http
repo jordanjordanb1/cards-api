@@ -11,11 +11,34 @@ GET {{baseUrl}}/api/decks/{{deckId}}
 
 ###
 
+# @name createDeckWithShuffle
+POST {{baseUrl}}/api/decks?shuffle=true
+
+###
+
+@deckId = {{createDeckWithShuffle.response.body.data.deck_id}}
+
+GET {{baseUrl}}/api/decks/{{deckId}}
+
+###
+
 # @name createDeckWithSelection
 POST {{baseUrl}}/api/decks?cards=5H,AS
 
 ###
 
 @deckId = {{createDeckWithSelection.response.body.data.deck_id}}
+
+GET {{baseUrl}}/api/decks/{{deckId}}
+
+###
+
+# @name createDeckWithSelectionAndShuffle
+POST {{baseUrl}}/api/decks?shuffle=true&cards=5H,AS,KS,7H,3D
+
+
+###
+
+@deckId = {{createDeckWithSelectionAndShuffle.response.body.data.deck_id}}
 
 GET {{baseUrl}}/api/decks/{{deckId}}

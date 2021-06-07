@@ -20,6 +20,7 @@ type Deck struct {
 	Cards     []card `json:"cards"`
 }
 
+// Creates a new deck of cards with no custom selection
 func NewDeck() Deck {
 	var cards []card
 	uuid := uuid.New().String()
@@ -30,6 +31,26 @@ func NewDeck() Deck {
 	}
 
 	deck := Deck{Id: uuid, Shuffled: false, Remaining: 52, Cards: cards}
+
+	return deck
+}
+
+// Creates a new deck based on selection passed as an argument
+func NewCustomDeck(cardSelection []string) Deck {
+	var cards []card
+	uuid := uuid.New().String()
+
+	// Loops through array of passed card types
+	for _, cardHash := range cardSelection {
+		foundCard, found := deckOfCards[cardHash]
+
+		// Checks if card type is valid
+		if found {
+			cards = append(cards, foundCard)
+		}
+	}
+
+	deck := Deck{Id: uuid, Shuffled: false, Remaining: len(cards), Cards: cards}
 
 	return deck
 }

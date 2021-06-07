@@ -8,3 +8,14 @@ POST {{baseUrl}}/api/decks
 @deckId = {{createDeck.response.body.data.deck_id}}
 
 GET {{baseUrl}}/api/decks/{{deckId}}
+
+###
+
+# @name createDeckWithSelection
+POST {{baseUrl}}/api/decks?cards=5H,AS
+
+###
+
+@deckId = {{createDeckWithSelection.response.body.data.deck_id}}
+
+GET {{baseUrl}}/api/decks/{{deckId}}

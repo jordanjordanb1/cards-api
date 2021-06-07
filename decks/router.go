@@ -2,6 +2,7 @@ package decks
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,9 +13,24 @@ func RouterRegister(router *gin.RouterGroup) {
 	router.GET("/:deckId", FindDeck)
 }
 
+// Handles POST route to create a new deck
 func CreateDeck(c *gin.Context) {
-	deck := NewDeck()
+	var deck Deck
 
+	cardSelection := c.Query("cards")
+
+	// Checks if query was set
+	if cardSelection != "" {
+		// Splits query string into slice
+		cardSelectionArray := strings.Split(cardSelection, ",")
+
+		deck = NewCustomDeck(cardSelectionArray)
+	} else {
+		// No query, create normal deck
+		deck = NewDeck()
+	}
+
+	// Saves deck to cache
 	deck.Save()
 
 	c.JSON(http.StatusCreated, gin.H{
@@ -23,6 +39,7 @@ func CreateDeck(c *gin.Context) {
 	})
 }
 
+// Handles GET route to fetch deck by it's id
 func FindDeck(c *gin.Context) {
 	deckId := c.Param("deckId")
 

@@ -83,7 +83,7 @@ func (deck *Deck) Save() *Deck {
 	// Deletes old item if set by any chance
 	cache.Cache.Del(deck.Id)
 
-	cache.Cache.Set(deck.Id, deck, 1)
+	cache.Cache.Set(deck.Id, deck, 0)
 
 	return deck
 }

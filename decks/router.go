@@ -38,9 +38,14 @@ func CreateDeck(c *gin.Context) {
 	// Saves deck to cache
 	deck.Save()
 
+	deckCopy := deck
+
+	deckCopy.UndrawnCards = nil
+	deckCopy.DrawnCards = nil
+
 	c.JSON(http.StatusCreated, gin.H{
 		"status": http.StatusCreated,
-		"data":   deck,
+		"data":   deckCopy,
 	})
 }
 
